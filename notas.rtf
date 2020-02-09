@@ -1,0 +1,62 @@
+{\rtf1\ansi\ansicpg1252\cocoartf1561\cocoasubrtf610
+{\fonttbl\f0\fswiss\fcharset0 Helvetica;}
+{\colortbl;\red255\green255\blue255;}
+{\*\expandedcolortbl;;}
+\paperw11900\paperh16840\margl1440\margr1440\vieww12600\viewh19100\viewkind0
+\pard\tx566\tx1133\tx1700\tx2267\tx2834\tx3401\tx3968\tx4535\tx5102\tx5669\tx6236\tx6803\pardirnatural\partightenfactor0
+
+\f0\b\fs24 \cf0 http://desarrollos.webdeprueba.com/artigniter/
+\b0 \
+\
+Lleva un modelo - vista - controlador de usuarios muy b\'e1sico, no me ha dado tiempo a m\'e1s. Ma\'f1ana lo contin\'fao.\
+\
+El usuario hace login, y si todo ok se va a una vista llamada 'intranet'\
+\
+Ya est\'e1 conectado a la base de datos (una tabla simple llamada 'usuarios')\
+\
+Usuario de prueba: usuario1\
+Contrase\'f1a de prueba: 123456\
+\
+\
+* El proyecto ya carga fuentes de google fonts, style.css y bootstrap 4. En las vistas ya se pueden realizar maquetaciones.\
+\
+\
+URL VERSI\'d3N 2.0 : http://desarrollos.webdeprueba.com/artigniter_v/\
+\
+\
+Este es el acceso a la Base de datos:\
+\
+HOST: desarrollos.webdeprueba.com\
+\
+DB: artigniter\
+\
+USUARIO: artigniter\
+CONTRASE\'d1A: cg4Wa290f%n8z4U~\
+\
+\
+Acceso a FTP del nuevo sitio versi\'f3n 2.0\
+HOST: desarrollos.webdeprueba.com\
+USUARIO:fernando_v2\
+CONTRASE\'d1A:9c6Iuet742^Ddl#7\
+\
+ \
+\
+Informaci\'f3n:\
+\
+Lo primero que carga este proyecto es el controlador 'Home', el controlador hace las gestiones que tenga que hacer, en este caso solamente carga la vista home y vistas header y footer.\
+\
+Controlador: Estructura y se encarga de las funciones y vistas. Si necesita datos din\'e1micos, llamar\'e1 a un modelo para conseguirlos y posteriormente pintarlos en las vistas que crea convenientes.\
+\
+Modelo: Hace llamadas a la base de datos y opera con los datos. Posteriormente un Controlador se encarga de llamarlos.\
+\
+Vista: Cuando el controlador ha hecho todo lo que deb\'eda (coger datos de un modelo, ejecutar funciones, etc...) llama a una o varias vistas, que al fin y al cabo es lo que de verdad se ve en el navegador.\
+\
+ \
+\
+* Un controlador puede llamar a varias vistas y a varios modelos. Cuando inserta varias vistas, se muestran en orden.\
+\
+* Un controlador puedo o no llamar a un modelo. Si no le hace falta traerse datos... no lo llama.\
+\
+* Un controlador puede pasar unos datos a una vista. Desde la vista se pueden pintar esos datos con variables PHP.\
+\
+Librer\'edas: En codeigniter, los CSS, javascript y dem\'e1s deben de ir fuera de la carpeta application, yo he creado una que se llama /public/ aunque tambi\'e9n podr\'eda llamarse assets.}
