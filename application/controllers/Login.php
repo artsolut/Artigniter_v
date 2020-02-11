@@ -10,26 +10,34 @@ class Login extends CI_Controller {
 		}
 
 		/**
-		 * Página principal del login
+		 * Index. 
+         * Función principal de la clase Login
 		 */
     public function index() {
 			$data['main_title'] = 'Acceso';
 
-			if ($this->usuario_model->is_logged_in())
-				redirect('intranet');
-			$this->form_validation->set_rules('email', 'Email', 'required|callback_login_check');
+			//Comprobamos si el usurio está autenticado. Si lo está cargamos directamente la página de Socios
+        
+            if ($this->usuario_model->is_logged_in())
+				redirect('socios');
+        
+			//Validación del formulario
+            $this->form_validation->set_rules('email', 'Email', 'required|callback_login_check');
 
-			if($this->form_validation->run() == false ) {
+			//Si la autenticación falla, volvemos a la página de Login, si es OK, redirigimos a Socios
+            if($this->form_validation->run() == false ) {
 				$this->load->view('componentes/header', $data );
 				$this->load->view('login');
 				$this->load->view('componentes/footer');
 			} else {
-				redirect('intranet');
+				redirect('socios');
 			}
 		}
 
 		/**
-		 * Chequeamos el login con los datos del usuario
+		 * login_check<br><br>
+         * Función de autenticación.
+         * Parámetros: $username y $password
 		 */
 
 		public function login_check($username) {
