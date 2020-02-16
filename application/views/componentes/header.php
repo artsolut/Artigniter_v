@@ -14,6 +14,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
     <meta name="author" content="Fernando Marín">
 
     <link href="https://fonts.googleapis.com/css?family=Libre+Franklin:400,600&display=swap" rel="stylesheet">
+    <link rel="shortcut icon" href=<?php echo base_url()?>favicon.png />
 
 	<script src="<?php echo base_url() ?>public/js/jquery-3.4.1.min.js"></script>
 	<script src="<?php echo base_url() ?>public/js/bootstrap.min.js"></script>

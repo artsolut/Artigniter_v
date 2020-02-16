@@ -11,7 +11,7 @@
 		<table id="tabla-socios" class="table table-bordered table-stripped">
 			<thead>
 			   <tr>
-				 <th scope="col">Apellidos y nombre</th>
+				 <th scope="col">Nombre</th>
 				 <th scope="col">Email</th>
 				 <th scope="col">Teléfonos</th>
 				 <th scope="col">Estatus</th>
@@ -23,13 +23,13 @@
 			<tbody>
 				<?php foreach ( $socios_data->result() as $socio ): ?>
 					<?php
-						$nombre = $socio->apellido1.' '.$socio->apellido2.': '.$socio->nombre;
+						$nombre = $socio->apellido1.' '.$socio->apellido2.', '.$socio->nombre;
 					?>
 					<tr id="<?php echo $socio->id ?>">
 						<td id="nombre"><?php echo $nombre ?> </td>
 						<td><?php echo $socio->email ?></td>
 						<td><?php echo $socio->telefono ?></td>
-						<td><?php echo $socio->estatus ?></td>
+						<td><?php echo $this->Estatus_model->get_estatus($socio->estatus) ?></td>
 						<td><?php echo $socio->localidad ?></td>
 						<td><?php echo $this->Area_model->get_area($socio->area_profesional) ?></td>
 						<td>
@@ -50,8 +50,19 @@
 </script>
  -->
 <script type="text/javascript">
+    //Función de inicialización de datatable, en la que he incluido el parámetro columns que me permite manipular el ancho de las columnas
 	$(document).ready(function(){
-		$("#tabla-socios").dataTable();
+		$("#tabla-socios").dataTable({
+          "columns": [
+            { "width": "40%" },
+            null,
+            null,
+            null,
+            null,
+            null,
+            null
+          ]
+        } );
 
 		$('.remove').click(function(){
 			var id = $(this).parents("tr").attr("id");
@@ -71,6 +82,7 @@
 				}
 			});
 		})
+        
 	});
 </script>
 

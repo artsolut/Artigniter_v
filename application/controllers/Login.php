@@ -1,6 +1,11 @@
 <?php
 if ( !defined('BASEPATH') ){ die('Direct access not permited.'); }
 
+
+/**
+* Clase Login. Default Controller
+* Controla la autenticación para el acceso
+**/
 class Login extends CI_Controller {
 
 		public function __construct(){
@@ -11,13 +16,14 @@ class Login extends CI_Controller {
 
 		/**
 		 * Index. 
-         * Función principal de la clase Login
+         * Función principal y de inicio de la clase Login
 		 */
     public function index() {
+            //El array $data contendrá siempre los parámatros generales de identificación de la sección
 			$data['main_title'] = 'Acceso';
 
-			//Comprobamos si el usurio está autenticado. Si lo está cargamos directamente la página de Socios
-        
+			//El modelo usuariuo_model ha sido cargado en autoload.php.<br>
+            //Comprobamos si el usurio está autenticado. Si lo está derivamos al controlador Socios, si no presentamos formulario de acceso
             if ($this->usuario_model->is_logged_in())
 				redirect('socios');
         

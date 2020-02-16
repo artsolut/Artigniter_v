@@ -1,6 +1,9 @@
 <?php
 if ( !defined('BASEPATH') ){ die('Direct access not permited.'); }
 
+/**
+* Clase Usuario_model. Modelo de control de usuarios con acceso.
+**/
 class Usuario_model extends Socio_model {
 
     /**
@@ -8,10 +11,15 @@ class Usuario_model extends Socio_model {
      */
     public function __construct() {
         parent::__construct();
-        $this->load->database();
     }
 
 
+    /**
+    * Método exists.
+    * Comprueba la existencia de un usuario por id en ambas tablas: usuario y socio
+    * Params: &user_id
+    * Return: registro de usuario
+    **/
     public function exists($user_id) {
 		$this->db->from('usuario');
 		$this->db->join('socio', 'socio.id = usuario.id_socio');
@@ -20,7 +28,10 @@ class Usuario_model extends Socio_model {
     }
 
     /**
-     * Comprobamos si el correo introducido existe en la tabla de usuarios
+    * Método chck_mail.
+    * Comprueba la existencia del correo introducido como username
+    * Params: $mail
+    * Return: registro de usuario
      */
     public function check_mail($mail) {
         $this->db->from('usuario');
@@ -28,12 +39,18 @@ class Usuario_model extends Socio_model {
         return ( $this->db->get()->num_rows() == 1 );
     }
 
+    /**
+    * Método get_all
+    * Obtiene la relación completa de usuario/socios activos y la ordena por apellidos y nombre
+    * Params: 
+    * Return: listado completo de socios activos ordenado por por apellidos y nombre
+    **/
     public function get_all($limit = 10000, $offset = 0 ) {
 
         $this->db->from('usuarios');
         $this->db->join('socio', 'socio.id = usuario.id_socio');
         $this->db->where('eliminado', 0);
-        $this->db->order_by('apellido1');
+        $this->db->order_by('apellido1', 'apellido2','nombre');
         $this->db->limit($limit);
         $this->db->offset($offset);
        return $this->db->get();

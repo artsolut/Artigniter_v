@@ -9,6 +9,7 @@ class Socio extends CI_Controller {
 		$this->load->model('Socio_model');
 		$this->load->model('Configuracion_model');
 		$this->load->model('Area_model');
+        $this->load->model('Estatus_model');
 		$this->load->helper('url', 'form');
 		$this->load->library('form_validation');
 		$this->errors = array();
