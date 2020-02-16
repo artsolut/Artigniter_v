@@ -10,6 +10,7 @@ class Socio extends CI_Controller {
 		$this->load->model('Configuracion_model');
 		$this->load->model('Area_model');
         $this->load->model('Estatus_model');
+        $this->load->model('Provincia_model');        
 		$this->load->helper('url', 'form');
 		$this->load->library('form_validation');
 		$this->errors = array();
@@ -45,7 +46,7 @@ class Socio extends CI_Controller {
 		$data['main_title'] = '';
 
 		$this->mybreadcrumb->add('Socios', 'socios');
-		$this->mybreadcrumb->add('Nevo socio', 'socios/create');
+		$this->mybreadcrumb->add('Nuevo socio', 'socios/create');
 
 		$data['nestedview']['breadcrumb'] = $this->mybreadcrumb->render();
 
@@ -63,7 +64,8 @@ class Socio extends CI_Controller {
 
 		$this->form_validation->set_rules('nombre', 'Nombre', 'trim|required');
 		$this->form_validation->set_rules('apellido1', 'Primer apellido', 'trim|required');
-		$this->form_validation->set_rules('apellido2', 'Segundo apellido', 'required');
+		$this->form_validation->set_rules('apellido2', 'Segundo apellido', 'trim|required');
+        $this->form_validation->set_rules('fecha_alta', 'Fecha de alta', 'required');
 
 		if ( $socio_id == -1 ) {
 			$this->form_validation->set_rules('dni', 'DNI', 'trim|required|is_unique[socio.dni]');
@@ -71,7 +73,7 @@ class Socio extends CI_Controller {
 			$this->form_validation->set_rules('dni', 'DNI', 'trim|required');
 
 		$this->form_validation->set_rules('direccion', 'Dirección', 'trim|required');
-		$this->form_validation->set_rules('cp', 'Código postal', 'required|is_numeric');
+		$this->form_validation->set_rules('cp', 'Código postal', 'required|is_numeric|exact_length[5]');
 
 		if($socio_id == -1 )
 			$this->form_validation->set_rules('email', 'Email', 'required|valid_email|is_unique[socio.email]');
@@ -88,6 +90,12 @@ class Socio extends CI_Controller {
 		$this->form_validation->set_message('check_area', 'Seleccione un área profesional.');
 		$this->form_validation->set_rules('iban', 'IBAN', 'required|callback_check_iban');
 		$this->form_validation->set_message('check_iban', 'El IBAN no tiene formato valido.');
+        
+        $this->form_validation->set_rules('twitter', 'TWITTER', 'valid_url');
+        $this->form_validation->set_rules('facebook', 'FACEBOOK', 'valid_url');
+        $this->form_validation->set_rules('instagram', 'INSTAGRAM', 'valid_url');
+        $this->form_validation->set_rules('linkedin', 'LINKEDIN', 'valid_url');
+
 
 
 		$nombre = $this->input->post('nombre');
@@ -100,6 +108,8 @@ class Socio extends CI_Controller {
 			'nombre' => $nombre,
 			'apellido1' => $apellido1,
 			'apellido2' => $apellido2,
+            'apellido2' => $apellido2,
+            'fecha_alta' => $this->input->post('fecha_alta'),
 			'dni' => $this->input->post('dni'),
 			'email' => $email,
 			'telefono' => $this->input->post('telefono'),
@@ -114,8 +124,11 @@ class Socio extends CI_Controller {
 			'iban' => $this->input->post('iban'),
 			'twitter' => $this->input->post('twitter'),
 			'facebook' => $this->input->post('facebook'),
-			'pinterest' => $this->input->post('pinterest'),
+			'instagram' => $this->input->post('instagram'),
 			'linkedin' => $this->input->post('linkedin'),
+            'otros' => $this->input->post('otros'),
+            'notas' => $this->input->post('notas'),
+            
 		);
 
 		if ($socio_id != -1 ) {
@@ -163,7 +176,7 @@ class Socio extends CI_Controller {
 
 				$this->load->library('email', $config );
 				$this->email->set_newline("\r\n");
-				$this->email->from('no-reply@dip.com', 'DIP');
+				$this->email->from('fernando@artsolut.es', 'DIP');
 
 				$data = array(
 					'name' => $socio_data['nombre']. ' ' . $socio_data['apellido1']. ' ' . $socio_data['apellido2'],

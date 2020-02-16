@@ -1,5 +1,10 @@
 <?php if ( !defined('BASEPATH') ){ die('Direct access not permited.'); }
 
+/**
+* Clase Estatus_model. 
+*Modelo para la gestión de los Estatus
+* Febrero de 2020
+**/
 class Estatus_model extends CI_Model {
 
 	public function __construct(){
@@ -8,20 +13,25 @@ class Estatus_model extends CI_Model {
 	}
 
 	/**
-	 * Comprobamos si existe el estatus
+	 * Método exists.
+     * Comprobación de la existencia de un estatus
+     * Params: $estatus_id
+     * Return: true, si hay un registro, false en cualquier otro caso.
 	 */
-	public function exists($area_id) {
+	public function exists($estatus_id) {
 		$this->db->from('estatus');
-		$this->db->where('id', $area_id);
+		$this->db->where('id', $estatus_id);
 		return ($this->db->get()->num_rows() == 1 );
 	}
-
 	/**
-	 * Obtiene la información del estatus
+	 * Método get_info.
+     * Devuelve todos los datos del registro solicitado
+     * Params: $estatus_id
+     * Return: El registro solicitado completo, si existe.
 	 */
-	public function get_info( $area_id ) {
+	public function get_info( $estatus_id ) {
 		$this->db->from('estatus');
-		$this->db->where('id', $area_id);
+		$this->db->where('id', $estatus_id);
 		$query = $this->db->get();
 
 		if ( $query->num_rows()  == 1 ) {
@@ -30,20 +40,25 @@ class Estatus_model extends CI_Model {
 	}
 
 	/**
-	 * Obtiene el array de estatus para el formulario
+	 * Método gest_estatus_array.
+     * Devuelve un array con el listado de estatus para el formulario de altas/modificaciones
+     * Return: array con todos los id y estatus de la tabla
 	 */
 	public function get_estatus_array() {
 
-		$areas = $this->get_all();
+		$estatus = $this->get_all();
 		$opciones = array('' => 'Seleccione un estatus');
-		foreach ($areas->result() as $row) {
-			$opciones[$row->id] = $row->area;
+		foreach ($estatus->result() as $row) {
+			$opciones[$row->id] = $row->estatus;
 		}
 		return $opciones;
 	}
 
 	/**
-	 * Obtiene el texto de un area dada por el id
+	 * Método get_estatus.
+     * Devuelve el nombre del estatus solicitado por su id
+     * Params: $estatus_id
+     * Return: El nombre del estatus
 	 */
 	public function get_estatus($estatus_id) {
 		$this->db->from('estatus');
@@ -56,7 +71,9 @@ class Estatus_model extends CI_Model {
 	}
 
 	/**
-	 * Obtiene todos los estatus de la base de datos
+	 * Método get_all.
+     * Devuelve todos los registros de estatus
+     * Return: todos los registrso de estatus
 	 */
 	public function get_all( $limit = 10000, $offset = 0 ) {
 		$this->db->from('estatus');

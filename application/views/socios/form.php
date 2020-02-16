@@ -58,6 +58,8 @@
 				'name' => 'fecha_alta',
 				'id' => 'fecha_alta',
 				'class' => 'form-control',
+                'value' => set_value('fecha_alta', isset($socio_data->fecha_alta) ? $socio_data->fecha_alta : '0000-00-00')
+
 			)); ?>
 		</div>
 	</div>
@@ -112,16 +114,16 @@
 			<?php echo form_label('Provincia *', 'provincia', array(
 				'class' => 'required control-label'
 			)); ?>
-			<?php $provincias = array('' => 'Provincia', '1' => 'Murcia') ?>
-			<?php
-				$provincia_data = '';
+			<?php $provincia_data = $this->Provincia_model->get_provincia_array()?>
+            <?php
+				$provincia_select_data = '';
 				if (isset($_POST['provincia'])){
-					$provincia_data = $_POST['provincia'];
-				} elseif (isset($socio_data->provincia)) {
-					$provincia_data = $socio_data->provincia;
+					$provincia_select_data = $_POST['provincia'];
+				} elseif (isset($socio_data->provincia)){
+					$provincia_select_data = $socio_data->provincia;
 				}
 			 ?>
-			<?php echo form_dropdown('provincia', $provincias, $provincia_data, 'class="form-control"') ?>
+			<?php echo form_dropdown('provincia', $provincia_data, $provincia_select_data, 'class="form-control"') ?>
 			<div class="help-block with-errors">
 				<?php echo form_error('provincia'); ?>
 			</div>
@@ -177,8 +179,8 @@
 				'class' => 'required control-label'
 			)); ?>
 
-			<?php $estatus_data = array('' => 'Seleccione un estatus', '1' => 'Profesional') ?>
-			<?php
+			<?php $estatus_data = $this->Estatus_model->get_estatus_array(); ?>
+            <?php
 				$estatus_select_data = '';
 				if (isset($_POST['estatus'])){
 					$estatus_select_data = $_POST['estatus'];
@@ -274,14 +276,14 @@
 			)); ?>
 		</div>
 		<div class="col-md-3">
-			<?php echo form_label('Pinterest', 'web', array(
+			<?php echo form_label('Instagram', 'web', array(
 				'class' => 'control-label'
 			)); ?>
 			<?php echo form_input(array(
-				'name' => 'pinterest',
-				'id' => 'pinteres',
+				'name' => 'instagram',
+				'id' => 'instagram',
 				'class' => 'form-control',
-				'value' => set_value('pinterest', isset($socio_data->pinterest) ? $socio_data->pinterest : '')
+				'value' => set_value('instagram', isset($socio_data->instagram) ? $socio_data->instagram : '')
 			)); ?>
 		</div>
 		<div class="col-md-3">
@@ -296,7 +298,32 @@
 			)); ?>
 		</div>
 	</div>
-
+	<div class="row">
+		<div class="col-md-6">
+			<?php echo form_label('Otras redes', 'web', array(
+				'class' => 'control-label'
+			)); ?>
+			<?php echo form_input(array(
+				'name' => 'otros',
+				'id' => 'otros',
+				'class' => 'form-control',
+				'value' => set_value('otros', isset($socio_data->otros) ? $socio_data->otros : '')
+			)); ?>
+		</div>
+        <div class="col-md-6">
+			<?php echo form_label('Notas', 'web', array(
+				'class' => 'control-label'
+			)); ?>
+			<?php echo form_textarea(array(
+				'name' => 'notas',
+				'id' => 'notas',
+				'class' => 'form-control',
+                'rows' => '5',
+				'value' => set_value('notas', isset($socio_data->notas) ? $socio_data->notas : '')
+     
+			)); ?>
+		</div>
+    </div>  
 	<div class="row">
 		<div class="col-md-3">
 			<?php echo form_submit('submit', 'Guardar', 'class="buttonform"') ?>
