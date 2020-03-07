@@ -35,8 +35,10 @@ class Configuracion_model extends CI_Model {
 		return $this->db->update('configuracion', $config_data );
 	}
 	
+    /**
 	protected function nameize($string) {
 		return str_name_case($string);
 	}
+    */
 
 }

@@ -10,22 +10,24 @@ class Login extends CI_Controller {
 
 		public function __construct(){
 			parent::__construct();
-			$this->load->helper('url');
-			$this->load->helper('form');
+			//$this->load->helper('url');
+			//$this->load->helper('form');
 		}
 
 		/**
 		 * Index. 
          * Función principal y de inicio de la clase Login
+         * Hay una ruta configurada "login" hacia este método
 		 */
     public function index() {
+        
             //El array $data contendrá siempre los parámatros generales de identificación de la sección
 			$data['main_title'] = 'Acceso';
 
-			//El modelo usuariuo_model ha sido cargado en autoload.php.<br>
-            //Comprobamos si el usurio está autenticado. Si lo está derivamos al controlador Socios, si no presentamos formulario de acceso
+			//El modelo usuariuo_model ha sido cargado en autoload.php.
+            //Comprobamos si el usuario está autenticado. Si lo está derivamos al controlador Socio, si no presentamos formulario de acceso
             if ($this->usuario_model->is_logged_in())
-				redirect('socios');
+				redirect('socios');  //Controlador Socio, método index
         
 			//Validación del formulario
             $this->form_validation->set_rules('email', 'Email', 'required|callback_login_check');
@@ -41,9 +43,10 @@ class Login extends CI_Controller {
 		}
 
 		/**
-		 * login_check<br><br>
-         * Función de autenticación.
+		 * Método login_check
+         * Lógica de autenticación.
          * Parámetros: $username y $password
+         * Return: boolean
 		 */
 
 		public function login_check($username) {
@@ -56,6 +59,12 @@ class Login extends CI_Controller {
 			return true;
 		}
 
+    
+        /**
+		 * Método reset_password
+         * Restablecemiento de la contraseña.
+         * El enlace "He olvidado la contraseña" de la vista Login, llama a este método
+		 */
 		public function reset_password() {
 
 			$data['nestedview']['title'] = 'Restablecer contraseña';

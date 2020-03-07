@@ -10,7 +10,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
     <meta name="apple-mobile-web-app-capable" content="yes" />
 
     <title><?php echo @$titulo;?></title>
-    <meta name="description" content="Esta es la meta descripción de la página" />
+    <meta name="description" content="Dip. Asociación de Profesionales del Diseño y la Comunicación Publicitaria de la Región de Murcia" />
     <meta name="author" content="Fernando Marín">
 
     <link href="https://fonts.googleapis.com/css?family=Libre+Franklin:400,600&display=swap" rel="stylesheet">
@@ -34,7 +34,8 @@ defined('BASEPATH') OR exit('No direct script access allowed');
         <div class="row">
             <div class="col-md-3"><img src="<?php echo base_url()?>public/images/logotipo-dip.png" ></div>
             <div class="col-md-9">
-				<?php if ( $this->session->userdata('id_socio') ): ?>
+				
+                <?php if ( $this->session->userdata('id_socio') ): ?>
 
 					<div class="menu-usuario">Usuario: <?php echo $this->session->userdata('email'); ?></div>
 					<div class="contenedor-menu">

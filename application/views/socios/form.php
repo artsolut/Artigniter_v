@@ -4,6 +4,11 @@
 <?php $this->load->view('partials/breadcrumb', $nestedview); ?>
 <?php $this->load->view('socios/menu'); ?>
 
+<!-- 
+Formulario para la edición de socios existentes.
+Utiliza el método save de la clase socio con el parámetro id_socio.
+-->
+
 <?php echo form_open('socio/save/'.(isset($socio_data->id)? $socio_data->id : '' ), array('id' => 'socio_form')); ?>
 
 <div class="container clearfix formulario">
@@ -63,8 +68,8 @@
 			)); ?>
 		</div>
 	</div>
+    
 	<div class="row">
-
 		<div class="col-md-3">
 			<?php echo form_label('DNI *', 'dni', array(
 				'class' => 'required control-label'
@@ -79,7 +84,6 @@
 				<?php echo form_error('dni'); ?>
 			</div>
 		</div>
-
 		<div class="col-md-3">
 			<?php echo form_label('Dirección *', 'direccion', array(
 				'class' => 'required control-label'
@@ -94,7 +98,6 @@
 				<?php echo form_error('direccion'); ?>
 			</div>
 		</div>
-
 		<div class="col-md-2">
 			<?php echo form_label('Código postal *', 'cp', array(
 				'class' => 'required control-label'
@@ -109,7 +112,6 @@
 				<?php echo form_error('cp'); ?>
 			</div>
 		</div>
-
 		<div class="col-md-2">
 			<?php echo form_label('Provincia *', 'provincia', array(
 				'class' => 'required control-label'
@@ -128,7 +130,6 @@
 				<?php echo form_error('provincia'); ?>
 			</div>
 		</div>
-
 		<div class="col-md-2">
 			<?php echo form_label('Localidad *', 'localidad', array(
 				'class' => 'required control-label'
@@ -193,7 +194,6 @@
 				<?php echo form_error('estatus'); ?>
 			</div>
 		</div>
-
 		<div class="col-md-3">
 			<?php echo form_label('Área profesional *', 'area', array(
 				'class' => 'required control-label'
@@ -298,6 +298,7 @@
 			)); ?>
 		</div>
 	</div>
+    
 	<div class="row">
 		<div class="col-md-6">
 			<?php echo form_label('Otras redes', 'web', array(
@@ -324,6 +325,7 @@
 			)); ?>
 		</div>
     </div>  
+    
 	<div class="row">
 		<div class="col-md-3">
 			<?php echo form_submit('submit', 'Guardar', 'class="buttonform"') ?>

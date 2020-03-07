@@ -1,9 +1,14 @@
 <?php
 if ( !defined('BASEPATH') ){ die('Direct access not permited.'); }
 
+/**
+* Clase Socio. 
+* Gestiona la lógica de la sección de socios
+**/
 class Socio extends CI_Controller {
 
     public function __construct() {
+        //Precargas no realizadas en autoload
 		parent::__construct();
 		$this->load->model('Usuario_model');
 		$this->load->model('Socio_model');
@@ -11,31 +16,49 @@ class Socio extends CI_Controller {
 		$this->load->model('Area_model');
         $this->load->model('Estatus_model');
         $this->load->model('Provincia_model');        
-		$this->load->helper('url', 'form');
-		$this->load->library('form_validation');
-		$this->errors = array();
+		//$this->load->helper('url', 'form');
+		//$this->load->library('form_validation');
+		//$this->errors = array();
     }
 
+    /**
+    * Método Index (método por defecto configurado en routes)
+    * Método para cargar listado de socios y vista del listado, generando variables generales
+    * Parámetros: 
+    * Return: 
+    */
     public function index() {
 
-		if ( !$this->Usuario_model->is_logged_in() )
+		//Si no hay sesión activa redirigimos a login
+        if ( !$this->Usuario_model->is_logged_in() )
 			redirect('login');
 
+        //Si la sesión está activa cargamos listado de socios
         $socios_obj = $this->Socio_model->get_all();
 
+        // variable de información general
         $data['nestedview']['main_title'] = 'Listado de Socios';
+        // objeto con listado de socios
 		$data['socios_data'] = $socios_obj;
 
-
+        // añadimos ruta al camino de migas
 		$this->mybreadcrumb->add( 'Socios', 'socios' );
 
-		/** Asignamos el breadcrumb */
+		// Generamos el camino de hormigas y lo añadimos al objeto nestedview
 		$data['nestedview']['breadcrumb'] = $this->mybreadcrumb->render();
 
+        // Cargamos vista para mostrar el listado de socios
 		$this->load->view('socios/listado', $data );
 	}
 
+    /**
+    * Método View 
+    * Método para editar el registro de un socio
+    * Parámetros: id de socio
+    * Return: 
+    */
 	public function view($socio_id = -1 ) {
+        //
 		$socio_info = $this->socio_model->get_info($socio_id);
 
 		foreach (get_object_vars($socio_info) as $property => $value) {
@@ -46,7 +69,7 @@ class Socio extends CI_Controller {
 		$data['main_title'] = '';
 
 		$this->mybreadcrumb->add('Socios', 'socios');
-		$this->mybreadcrumb->add('Nuevo socio', 'socios/create');
+		$this->mybreadcrumb->add('Nuevo socio', 'socios/edit');
 
 		$data['nestedview']['breadcrumb'] = $this->mybreadcrumb->render();
 
@@ -218,10 +241,40 @@ class Socio extends CI_Controller {
 		}
 	}
 
-	public function delete( ) {
-		$socio_to_delete = $this->input->post('id');
+  /**
+    * Método delete_socio 
+    * Método para marcar como eliminados a socios desde el listado de socios. No borra, solo marca.
+    * Parámetros: $socio_to_delete (id de socio)
+    * Return: redirige a socio/index con un mensaje de éxito o de error
+    */  
+	public function delete_socio( $socio_to_delete ) {
+        
+        if ($this->socio_model->exists($socio_to_delete)){
+            
+            $this->socio_model->delete_item($socio_to_delete);
+            
+             $message_data = array(
+                'item' => 'message',
+                'type' => 'success',
+                'message' => 'Ha sido borrado con éxito el socio ' . $socio_to_delete,
+             );
+            
+            $this->session->set_flashdata($message_data);
+			
+            redirect('socio/index');    
+                                                          
+        }else{
 
-		$this->socio_model->delete($socio_to_delete);
+            $message_data = array(
+                'item' => 'message',
+                'type' => 'danger',
+                'message' => 'Ha ocurrido un error al eliminar el socio ' . $socio_to_delete,
+             );
+            $this->session->set_flashdata($message_data);
+            
+            redirect('socio/index');   
+
+        }
 
 	}
 
