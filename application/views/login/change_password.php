@@ -1,21 +1,14 @@
 <?php if ( !defined('BASEPATH') ){ die('Direct access not permited.'); }?>
 
-<?php $this->load->view('componentes/header', $nestedview) ?>
-
+<?php $this->load->view('componentes/header', $nestedview); ?>
 <div class="container">
 	<div class="row wrap_login">
 		<div class="col-md-6 text-right">
-			<h1>Restablecer contraseña</h1>
+			<h1>Cambiar contraseña</h1>
 		</div>
 		<div class="col-md-6">
-			<?php echo form_open('login/reset_password', array('id' => 'reset_password')); ?>
-				<?php echo form_input(array(
-					'id' => 'email',
-					'name' => 'email',
-					'class' => 'inputform',
-					'placeholder' => 'Email'
-				)); ?>
-				<!-- <?php echo form_password(array(
+			<?php echo form_open('login/change_password', array('id' => 'change_password')); ?>
+				<?php echo form_password(array(
 					'id' => 'password',
 					'name' => 'password',
 					'class' => 'inputform',
@@ -26,9 +19,23 @@
 					'name' => 're-password',
 					'class' => 'inputform',
 					'placeholder' => 'Repite Password'
-				)); ?> -->
+				)); ?>
+                <?php echo form_input(array(
+					'id' => 'id_socio',
+					'name' => 'id_socio',
+					'class' => 'inputform',
+					'type' => 'hidden',
+                    'value' => $id_socio
+				)); ?> 
+				<?php echo form_input(array(
+					'id' => 'key_url',
+					'name' => 'key_url',
+					'class' => 'inputform',
+					'type' => 'hidden',
+                    'value' => $key_url
+				)); ?>            
 
-				<?php echo form_submit('submit', 'Enviar', 'class="buttonform"') ?>
+				<?php echo form_submit('submit', 'Cambiar contraseña', 'class="buttonform"') ?>
 			<?php echo form_close(); ?>
 
 			<?php $errors = validation_errors(); ?>

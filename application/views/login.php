@@ -20,7 +20,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 
                 <div class="error_login">
                 <img src="<?php echo base_url()?>public/images/icon_alert.png" width="45" height="45" />
-                <p>Usuario o contraseña incorectos.<br />Vuelva a intentarlo.</p>
+                <p>Usuario o contraseña incorrectos.<br />Vuelva a intentarlo.</p>
                 </div>
 
 			<?php endif; ?>

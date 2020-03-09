@@ -189,17 +189,29 @@ class Socio extends CI_Controller {
 				$config = Array(
 					'protocol' => 'smtp',
 					'smtp_host' => $this->encryption->decrypt($config->smtp),
-					'smtp_port' => 465,
+					'smtp_port' => 587,
 					'smtp_user' => $this->encryption->decrypt($config->email_emisor),
 					'smtp_pass' => $this->encryption->decrypt($config->password),
 					'mailtype' => 'html',
 					'charset' => 'utf-8',
-					'newline' => "\r\n"
+					'newline' => "\r\n",
+                    'smtp_timeout'   =>   7,
+                    'smtp_crypto'   =>   'tls',
+                    'smtp_debug'   =>   0,
+                    'wordwrap'   =>   TRUE,
+                    'wrapchars'   =>   76,
+                    'mailtype'   =>   'html',
+                    'charset'   =>   'utf-8',
+                    'validate'   =>   TRUE,
+                    'crlf'   =>   "\r\n",
+                    'newline'   =>   "\r\n",
+                    'bcc_batch_mode'   =>   false,
+                    'bcc_bath_size'   =>   200
 				);
 
 				$this->load->library('email', $config );
 				$this->email->set_newline("\r\n");
-				$this->email->from('fernando@artsolut.es', 'DIP');
+				$this->email->from($config->smtp_user, 'DIP');
 
 				$data = array(
 					'name' => $socio_data['nombre']. ' ' . $socio_data['apellido1']. ' ' . $socio_data['apellido2'],

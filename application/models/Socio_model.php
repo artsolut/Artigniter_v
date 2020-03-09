@@ -88,6 +88,33 @@ class Socio_model extends CI_Model {
 		}
 	}
 
+    
+    
+	/**
+     * Método check_mail
+	 * Devuelve TRUE si el correo existe y está activo
+     * Params: email
+     * Return: id | null
+	 */
+	public function check_mail( $email_to_check ) {
+        
+        // obtenemos el registro
+		$query = $this->db->get_where('socio', array('email' => $email_to_check, 'eliminado' => 0 ), 1);
+        
+		// Si existe devolvemos el id
+        if ( $query->num_rows() == 1 ){
+            
+            $row = $query->row();
+            return $row->id;
+            
+		} else {
+            
+            // Si no existe devolvemos null
+            return null;
+		}
+	}
+    
+    
 	/**
      * Método save
 	 * Introduce los datos de un nuevo socio o reemplaza los datos de uno existente
