@@ -56,6 +56,29 @@ class Usuario_model extends Socio_model {
        return $this->db->get();
     }
 
+    /** Método save_new_pass
+    * Guarda el nuevo password del usuario tras la solicitud 
+    * Params:
+    * Return: boolean
+    **/
+    public function save_new_pass($pass, $id_socio){
+        
+        $key_pass = password_hash($pass, PASSWORD_DEFAULT);
+        $this->db->set('password', $key_pass);
+        $this->db->where('id_socio', $id_socio);
+        
+        if ($this->db->update('usuario')){
+        
+            return true;
+            
+        }else{
+            
+            return false;
+            
+        }
+    }
+    
+    
     /**
      * Obtenemos la info del usuario dado por $user_id
      */

@@ -23,7 +23,24 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                 <p>Usuario o contraseña incorrectos.<br />Vuelva a intentarlo.</p>
                 </div>
 
-			<?php endif; ?>
+			<?php endif; 
+                if ( $this->session->flashdata("success")) {
+            
+            ?>
+				<div class="success_login">
+					<img src="<?php echo base_url()?>public/images/icon_success.png" width="45"  />
+					<?php echo $this->session->flashdata("success");?>
+				</div>
+            <?php } ?>
+			<?php
+                if ( $this->session->flashdata("error")) {
+            ?>
+            
+                <div class="error_login">
+					<img src="<?php echo base_url()?>public/images/icon_alert.png" width="45"  />
+					<?php echo $this->session->flashdata("error");?>
+				</div>
+			<?php }; ?>
         </div>
     </div>
 </div>

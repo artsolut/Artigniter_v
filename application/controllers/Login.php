@@ -35,6 +35,7 @@ class Login extends CI_Controller {
 
 			//Si la autenticación falla, volvemos a la página de Login, si es OK, redirigimos a Socios
             if($this->form_validation->run() == false ) {
+                $this->session->keep_flashdata();
 				$this->load->view('componentes/header', $data );
 				$this->load->view('login');
 				$this->load->view('componentes/footer');
@@ -99,60 +100,59 @@ class Login extends CI_Controller {
                         $url_recovery = base_url()."login/change_password/".$check_email."/".$key_control;
                         
                         //Almacenamos 
-                        $this->db->set('recuperar', $string_recovery);
-                        $this->db->where('id', $check_email);
-                        $this->db->update('socio'); 
-                        
-                        
-                        
-                        $message_recovery = "Hola. Si has solicitado la recuperación de la contraseña, haz clic en <strong><a href='". $url_recovery ."'>este enlace</a></strong> para iniciar el proceso, en caso contrario elimina este correo.";
-                        
-                        
-                        $config = $this->Configuracion_model->get_configuracion();
-
-                        $config = Array(
-                            'protocol' => 'smtp',
-                            'smtp_host' => $this->encryption->decrypt($config->smtp),
-                            'smtp_port' => 587,
-                            'smtp_user' => $this->encryption->decrypt($config->email_emisor),
-                            'smtp_pass' => $this->encryption->decrypt($config->password),
-                            'mailtype' => 'html',
-                            'charset' => 'utf-8',
-                            'newline' => "\r\n",
-                            'smtp_timeout'   =>   7,
-                            'smtp_crypto'   =>   'tls',
-                            'smtp_debug'   =>   0,
-                            'wordwrap'   =>   TRUE,
-                            'wrapchars'   =>   76,
-                            'mailtype'   =>   'html',
-                            'charset'   =>   'utf-8',
-                            'validate'   =>   TRUE,
-                            'crlf'   =>   "\r\n",
-                            'newline'   =>   "\r\n",
-                            'bcc_batch_mode'   =>   false,
-                            'bcc_bath_size'   =>   200
-                        );
-                        
-                        $this->load->library('email');
-                        $this->email->initialize($config);
-                        $this->email->from($config['smtp_user'], 'Dip');
+                        if ($this->socio_model->control_change_pass($string_recovery, $check_email)){
+    
+                            $message_recovery = "Hola. Si has solicitado la recuperación de la contraseña, haz clic en <strong><a href='". $url_recovery ."'>este enlace</a></strong> para iniciar el proceso, en caso contrario elimina este correo.";
 
 
-                        $this->email->to($_POST['email']);
-                        $this->email->subject('Dip. Recuperación de contraseña');
-                        $this->email->message($message_recovery);
-                        
-                        
-                        if ($this->email->send()){
-                            
-                            $this->session->set_flashdata("success", "Se ha enviado un correo a la dirección de e-mail introducida.");
-                            $this->load->view('login/reset_password', "refresh");
-                            
+                            $config = $this->Configuracion_model->get_configuracion();
+
+                            $config = Array(
+                                'protocol' => 'smtp',
+                                'smtp_host' => $this->encryption->decrypt($config->smtp),
+                                'smtp_port' => 587,
+                                'smtp_user' => $this->encryption->decrypt($config->email_emisor),
+                                'smtp_pass' => $this->encryption->decrypt($config->password),
+                                'mailtype' => 'html',
+                                'charset' => 'utf-8',
+                                'newline' => "\r\n",
+                                'smtp_timeout'   =>   7,
+                                'smtp_crypto'   =>   'tls',
+                                'smtp_debug'   =>   0,
+                                'wordwrap'   =>   TRUE,
+                                'wrapchars'   =>   76,
+                                'mailtype'   =>   'html',
+                                'charset'   =>   'utf-8',
+                                'validate'   =>   TRUE,
+                                'crlf'   =>   "\r\n",
+                                'newline'   =>   "\r\n",
+                                'bcc_batch_mode'   =>   false,
+                                'bcc_bath_size'   =>   200
+                            );
+
+                            $this->load->library('email');
+                            $this->email->initialize($config);
+                            $this->email->from($config['smtp_user'], 'Dip');
+
+
+                            $this->email->to($_POST['email']);
+                            $this->email->subject('Dip. Recuperación de contraseña');
+                            $this->email->message($message_recovery);
+
+
+                            if ($this->email->send()){
+
+                                $this->session->set_flashdata("success", "Se ha enviado un correo a la dirección de e-mail facilitada.");
+                                $this->load->view('login/reset_password', "refresh");
+
+                            }else{
+
+                                //si ocurre algún error en el envío mostramos lista de errores.
+                                show_error($this->email->print_debugger());
+                            }
                         }else{
                             
-                            //si ocurre algún error en el envío mostramos lista de errores.
-                            show_error($this->email->print_debugger());
-                        }
+                        }    
                         
                     }else{
                         
@@ -217,21 +217,16 @@ class Login extends CI_Controller {
                     if ($key_url == $key_saved){
 
                         //Almacenamos nueva contraseña
-                        $key_pass = password_hash($pass, PASSWORD_DEFAULT);
-                        $this->db->set('password', $key_pass);
-                        $this->db->where('id_socio', $id_socio);
-                        
-                        if ($this->db->update('usuario')){
+                        if ($this->usuario_model->save_new_pass($pass, $id_socio)){
                              
-                            $this->session->set_flashdata("errormsg", "Contraseña actualizada. Autentíquese de nuevo.");
+                            $this->session->set_flashdata("success", "Contraseña actualizada. Autentíquese de nuevo.");
                             redirect($base_url."/login/");
-                            
+                     
                             
                         }else{
                             
                             $this->session->set_flashdata("errormsg", "Ha ocurrido un error, inténtelo de nuevo más tarde.");
-                            redirect("https://www.artsolut.es/error");
-                            //$this->load->view('login', "refresh");
+                            redirect($base_url."/login/");
                         }
                             
                         

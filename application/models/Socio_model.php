@@ -88,7 +88,28 @@ class Socio_model extends CI_Model {
 		}
 	}
 
-    
+    /**
+    * Método control_change_pass
+    * Devuelve TRUE si ejecuta el update y false en caso contrario
+    * Params 
+    * Return: boolean
+    **/
+    public function control_change_pass($string_recovery, $check_email) {
+        
+        $this->db->set('recuperar', $string_recovery);
+        $this->db->where('id', $check_email);
+        
+        if ($this->db->update('socio')){
+            
+            return true;
+            
+        }else{            
+        
+            return false;
+            
+        } 
+        
+    }
     
 	/**
      * Método check_mail
