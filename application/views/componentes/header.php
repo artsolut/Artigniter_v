@@ -9,7 +9,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <meta name="apple-mobile-web-app-capable" content="yes" />
 
-    <title><?php echo @$titulo;?></title>
+    <title><?php echo @$main_title;?></title>
     <meta name="description" content="Dip. Asociación de Profesionales del Diseño y la Comunicación Publicitaria de la Región de Murcia" />
     <meta name="author" content="Fernando Marín">
 

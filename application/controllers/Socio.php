@@ -46,9 +46,10 @@ class Socio extends CI_Controller {
 
 		// Generamos el camino de hormigas y lo añadimos al objeto nestedview
 		$data['nestedview']['breadcrumb'] = $this->mybreadcrumb->render();
-
+        
         // Cargamos vista para mostrar el listado de socios
-		$this->load->view('socios/listado', $data );
+		$this->session->keep_flashdata();
+        $this->load->view('socios/listado', $data );
 	}
 
     /**
@@ -78,13 +79,16 @@ class Socio extends CI_Controller {
 		$this->load->view('socios/form', $data);
 	}
 
-	/**
-	 * Guarda los datos del socio
-	 */
+
+    /**
+    * Método Save 
+    * Método para guardar el registro de un socio
+    * Parámetros: id de socio (si es edición o -1 si es nuevo)
+    * Return: boolean
+    */
 	public function save( $socio_id = -1 ) {
 
-		$data['main_title'] = '';
-
+        //Validación de formulario
 		$this->form_validation->set_rules('nombre', 'Nombre', 'trim|required');
 		$this->form_validation->set_rules('apellido1', 'Primer apellido', 'trim|required');
 		$this->form_validation->set_rules('apellido2', 'Segundo apellido', 'trim|required');
@@ -120,13 +124,17 @@ class Socio extends CI_Controller {
         $this->form_validation->set_rules('linkedin', 'LINKEDIN', 'valid_url');
 
 
-
+        //Generamos el array socio_data con todos los campos
 		$nombre = $this->input->post('nombre');
 		$apellido1 = $this->input->post('apellido1');
 		$apellido2 = $this->input->post('apellido2');
 
 		$email = $this->input->post('email');
-
+        
+        
+        //Subimos los archivos 
+        $images = $this->upload_images();
+        
 		$socio_data = array(
 			'nombre' => $nombre,
 			'apellido1' => $apellido1,
@@ -142,20 +150,31 @@ class Socio extends CI_Controller {
 			'localidad' => $this->input->post('localidad'),
 			'estatus' => $this->input->post('estatus'),
 			'area_profesional' => $this->input->post('area_profesional'),
-			'marca' => $this->input->post('marca'),
+            'marca' => $this->input->post('marca'),
 			'web' => $this->input->post('web'),
+            'logo_marca' => $images['logo_marca'],
+            'foto' => $images['foto'],
 			'iban' => $this->input->post('iban'),
 			'twitter' => $this->input->post('twitter'),
 			'facebook' => $this->input->post('facebook'),
 			'instagram' => $this->input->post('instagram'),
 			'linkedin' => $this->input->post('linkedin'),
             'otros' => $this->input->post('otros'),
-            'notas' => $this->input->post('notas'),
+            'notas' => $this->input->post('notas')
             
 		);
+        
+
+        
 
 		if ($socio_id != -1 ) {
 			$socio_data['id'] = $socio_id;
+            
+            //Eliminamos del array $socio_data los campos de imagen que no hayan sido modificados (pues vienen vacíos)
+            if ($socio_data['logo_marca'] === null)
+                unset($socio_data['logo_marca']);
+            if ($socio_data['foto'] === null)
+                unset($socio_data['foto']);
 		}
 
 		//$data['socio_data'] = $socio_data;
@@ -173,6 +192,7 @@ class Socio extends CI_Controller {
 				'username' => $email,
 				'password' => password_hash($pass, PASSWORD_DEFAULT)
 			);
+            
 		} else {
 			$usuario_data = array(
 				'username' => $email,
@@ -181,8 +201,12 @@ class Socio extends CI_Controller {
 
 		if ($this->Usuario_model->save_user($socio_data, $usuario_data, $socio_id)){
 			if( $socio_id == -1 ) {
-				$msg = 'Socio agregado con éxito: ' . $apellido1 . ' ' . $apellido2 .' '. $nombre;
-				$this->flash->setMessage( $msg, $this->flash->getSuccessType() );
+                $message_data = array(
+				'item' => 'message',
+				'type' => 'success',
+				'message' => 'Socio agregado con éxito: ' . $apellido1 . ' ' . $apellido2 .' '. $nombre
+			     );
+			     $this->session->set_flashdata($message_data);
 
 				$config = $this->Configuracion_model->get_configuracion();
 
@@ -229,6 +253,12 @@ class Socio extends CI_Controller {
 				if ( !$r ) {
 					$msg = 'Error en el envio de email: ' . $this->email->print_debugger();
 					$this->flash->setMessage( $msg, $this->flash->getErrorType());
+                    $message_data = array(
+                    'item' => 'message',
+                    'type' => 'danger',
+                    'message' => $msg
+                     );
+                     $this->session->set_flashdata($message_data);
 				}
 				$this->flash->setFlashMessages();
 
@@ -253,6 +283,83 @@ class Socio extends CI_Controller {
 		}
 	}
 
+  /**
+    * Método upload_images 
+    * Método para subir el logo y la foto de los socixs
+    * Return: datos imágenes
+    */  
+    
+    public function upload_images()
+    {
+            $configupload['upload_path']          = './public/images/logos/';
+            $configupload['allowed_types']        = 'gif|jpg|png';
+            $configupload['max_size']             = 1024;
+            $configupload['max_width']            = 800;
+            $configupload['max_height']           = 800;
+
+            $this->load->library('upload', $configupload);
+            $this->load->library('session');
+            $this->load->helper('security');
+
+            if ( $this->security->xss_clean($this->upload->data(), TRUE) === FALSE )
+            {
+
+                $message_data = array(
+					'item' => 'message',
+					'type' => 'errormsg',
+					'message' => 'Error xss archivo'
+				);
+				$this->session->set_flashdata($message_data);
+                rediret("socio/view", "refresh");
+
+            }
+
+            if (!$this->upload->do_upload("foto"))
+            {
+                $message_data = array(
+					'item' => 'message',
+					'type' => 'errormsg',
+					'message' => $this->upload->display_errors()
+				);
+				$this->session->set_flashdata($message_data);  
+            }
+            else
+            {
+                $message_data = array(
+					'item' => 'message',
+					'type' => 'success',
+					'message' => $this->upload->data()
+				);
+				$this->session->set_flashdata($message_data);  
+                $files['foto'] =  $this->upload->data('file_name');
+            }
+
+            if (!$this->upload->do_upload("logo"))
+            {
+                $message_data = array(
+					'item' => 'message',
+					'type' => 'errormsg',
+					'message' => $message_data['message']. " - ".$this->upload->display_errors()
+				);
+				$this->session->set_flashdata($message_data);  
+            }
+            else
+            {
+                
+                $message_data = array(
+					'item' => 'message',
+					'type' => 'success',
+					'message' => $message_data['message']." - ".$this->upload->data()
+				);
+				$this->session->set_flashdata($message_data);  
+                $files['logo_marca'] = $this->upload->data('file_name');
+
+            }
+
+            return $files;
+    }
+        
+    
   /**
     * Método delete_socio 
     * Método para marcar como eliminados a socios desde el listado de socios. No borra, solo marca.

@@ -1,7 +1,7 @@
 <?php if (!defined('BASEPATH')) {die('Direct access not permited.');} 
 
 /**
- * Clase Mybreadcrub (library)
+ * Clase Mybreadcrumb (library)
  * Control sobre el camino de migas
  */
 class Mybreadcrumb {

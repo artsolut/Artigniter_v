@@ -23,7 +23,8 @@ class Login extends CI_Controller {
     public function index() {
         
             //El array $data contendrá siempre los parámatros generales de identificación de la sección
-			$data['main_title'] = 'Acceso';
+			$data['nestedview']['main_title'] = 'Acceso';  // Para el title de cada página
+            //$data['nestedview']['title'] = 'Acceso'; //Para el breadcrumb
 
 			//El modelo usuariuo_model ha sido cargado en autoload.php.
             //Comprobamos si el usuario está autenticado. Si lo está derivamos al controlador Socio, si no presentamos formulario de acceso

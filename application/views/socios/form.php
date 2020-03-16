@@ -9,7 +9,7 @@ Formulario para la edición de socios existentes.
 Utiliza el método save de la clase socio con el parámetro id_socio.
 -->
 
-<?php echo form_open('socio/save/'.(isset($socio_data->id)? $socio_data->id : '' ), array('id' => 'socio_form')); ?>
+<?php echo form_open_multipart('socio/save/'.(isset($socio_data->id)? $socio_data->id : '' ), array('id' => 'socio_form')); ?>
 
 <div class="container clearfix formulario">
 	<div class="row">
@@ -145,6 +145,61 @@ Utiliza el método save de la clase socio con el parámetro id_socio.
 			</div>
 		</div>
 	</div>
+    
+    
+    
+    
+    
+    <div class="row">
+		<div class="col-md-4">
+			<?php echo form_label('Logo Marca -800x800px-', 'logo', array(
+				'class' => 'control-label'
+			)); ?>
+			<?php echo form_upload(array(
+				'name' => 'logo',
+				'id' => 'logo',
+				'class' => 'form-control',
+				'value' => set_value('logo', isset($socio_data->logo_marca) ? $socio_data->logo_marca : '')
+			)); ?>
+			<div class="help-block with-errors">
+				<?php echo form_error('logo'); ?>
+			</div>
+		</div>
+        <div class="col-md-2">
+			<?php 
+            if (trim($socio_data->logo_marca) != ""){
+                //echo "<br />".$socio_data->logo_marca;
+                echo "<img src=".base_url()."/public/images/logos/".$socio_data->logo_marca." alt=".$socio_data->logo_marca." height=80>";
+            }
+            ?>
+		</div>
+        <div class="col-md-4">
+			<?php echo form_label('Foto socia/o -800x800px-', 'foto', array(
+				'class' => 'control-label'
+			)); ?>
+			<?php echo form_upload(array(
+				'name' => 'foto',
+				'id' => 'foto',
+				'class' => 'form-control',
+				'value' => set_value('foto', isset($socio_data->foto) ? $socio_data->foto : '')
+			)); ?>
+			<div class="help-block with-errors">
+				<?php echo form_error('foto'); ?>
+			</div>
+		</div>
+        <div class="col-md-2">
+			<?php 
+            if (trim($socio_data->foto) != ""){
+                //echo "<br />".$socio_data->foto;
+                echo "<img src=".base_url()."/public/images/logos/".$socio_data->foto." alt=".$socio_data->foto." height=80>";
+            }
+            ?>
+		</div>
+	</div>
+    
+    
+    
+    
 
 	<div class="row">
 		<div class="col-md-3">
@@ -215,7 +270,7 @@ Utiliza el método save de la clase socio con el parámetro id_socio.
 	</div>
 	<div class="row">
 		<div class="col-md-3">
-			<?php echo form_label('Marca', 'telefono', array(
+			<?php echo form_label('Marca', 'marca', array(
 				'class' => 'control-label'
 			)); ?>
 			<?php echo form_input(array(
@@ -254,7 +309,7 @@ Utiliza el método save de la clase socio con el parámetro id_socio.
 
 	<div class="row">
 		<div class="col-md-3">
-			<?php echo form_label('Twitter', 'web', array(
+			<?php echo form_label('Twitter', 'twitter', array(
 				'class' => 'control-label'
 			)); ?>
 			<?php echo form_input(array(
@@ -265,7 +320,7 @@ Utiliza el método save de la clase socio con el parámetro id_socio.
 			)); ?>
 		</div>
 		<div class="col-md-3">
-			<?php echo form_label('Facebook', 'web', array(
+			<?php echo form_label('Facebook', 'facebook', array(
 				'class' => 'control-label'
 			)); ?>
 			<?php echo form_input(array(
@@ -276,7 +331,7 @@ Utiliza el método save de la clase socio con el parámetro id_socio.
 			)); ?>
 		</div>
 		<div class="col-md-3">
-			<?php echo form_label('Instagram', 'web', array(
+			<?php echo form_label('Instagram', 'instagram', array(
 				'class' => 'control-label'
 			)); ?>
 			<?php echo form_input(array(
@@ -287,7 +342,7 @@ Utiliza el método save de la clase socio con el parámetro id_socio.
 			)); ?>
 		</div>
 		<div class="col-md-3">
-			<?php echo form_label('Linkedin', 'web', array(
+			<?php echo form_label('Linkedin', 'linkedin', array(
 				'class' => 'control-label'
 			)); ?>
 			<?php echo form_input(array(
@@ -301,7 +356,7 @@ Utiliza el método save de la clase socio con el parámetro id_socio.
     
 	<div class="row">
 		<div class="col-md-6">
-			<?php echo form_label('Otras redes', 'web', array(
+			<?php echo form_label('Otras redes', 'otros ', array(
 				'class' => 'control-label'
 			)); ?>
 			<?php echo form_input(array(
@@ -312,7 +367,7 @@ Utiliza el método save de la clase socio con el parámetro id_socio.
 			)); ?>
 		</div>
         <div class="col-md-6">
-			<?php echo form_label('Notas', 'web', array(
+			<?php echo form_label('Notas', 'notas', array(
 				'class' => 'control-label'
 			)); ?>
 			<?php echo form_textarea(array(

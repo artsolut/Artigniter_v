@@ -144,8 +144,11 @@ class Socio_model extends CI_Model {
 	 */
 	public function save( &$socio_data, $socio_id = false ) {
         
+        
+        
         // Si es un nuevo socio guardamos en BBDD y actualizamos el objeto socio_data con el nuevo Id de socio.
         if ( !$socio_id || !$this->exists($socio_id) ) {
+            
             
 			if ( $this->db->insert('socio', $socio_data ) ) {
                 
