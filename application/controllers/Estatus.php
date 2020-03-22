@@ -7,6 +7,7 @@ class Estatus extends CI_Controller {
 		parent::__construct();
 		$this->load->model('Estatus_model');
 		$this->load->model('Periodicidad_model');
+		$this->load->model('Usuario_model');
 		$this->load->library('flash', 'mybreadcrumb');
 		$this->load->helper('form', 'form_validation', 'url');
 	}
@@ -15,6 +16,9 @@ class Estatus extends CI_Controller {
 	 * Vista principal
 	 */
 	public function index() {
+        
+        if ( !$this->Usuario_model->is_logged_in() )
+				redirect('login');
 
 		$estatus_obj = $this->Estatus_model->get_all();
 		$data['nestedview']['main_title'] = "Listado de estatus";

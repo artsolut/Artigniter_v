@@ -79,6 +79,33 @@ class Socio extends CI_Controller {
 		$this->load->view('socios/form', $data);
 	}
 
+    /**
+    * Método Socio_view 
+    * Método para visualizar el registro de un socio (sólo para ese socio)
+    * Parámetros: id de socio
+    * Return: 
+    */
+	public function socio_view($socio_id = -1 ) {
+        //
+		$socio_info = $this->socio_model->get_info($socio_id);
+
+		foreach (get_object_vars($socio_info) as $property => $value) {
+			$socio_info->$property = $value;
+		}
+
+		$data["socio_data"] = $socio_info;
+		$data['main_title'] = '';
+
+		$this->mybreadcrumb->add('Socios', 'socios');
+		$this->mybreadcrumb->add('Ficha de registro', 'socios/socio_view');
+
+		$data['nestedview']['breadcrumb'] = $this->mybreadcrumb->render();
+
+		$data['errors'] = $this->errors;
+
+		$this->load->view('socios/socio_card', $data);
+	}
+    
 
     /**
     * Método Save 
@@ -117,6 +144,7 @@ class Socio extends CI_Controller {
 		$this->form_validation->set_message('check_area', 'Seleccione un área profesional.');
 		$this->form_validation->set_rules('iban', 'IBAN', 'required|callback_check_iban');
 		$this->form_validation->set_message('check_iban', 'El IBAN no tiene formato valido.');
+        $this->form_validation->set_rules('nivel', 'Nivel de Acceso', 'required');
         
         $this->form_validation->set_rules('twitter', 'TWITTER', 'valid_url');
         $this->form_validation->set_rules('facebook', 'FACEBOOK', 'valid_url');
@@ -130,7 +158,7 @@ class Socio extends CI_Controller {
 		$apellido2 = $this->input->post('apellido2');
 
 		$email = $this->input->post('email');
-        
+        $nivel = $this->input->post('nivel');
         
         //Subimos los archivos 
         $images = $this->upload_images();
@@ -190,35 +218,52 @@ class Socio extends CI_Controller {
 			$pass = $this->random_password();
 			$usuario_data = array(
 				'username' => $email,
-				'password' => password_hash($pass, PASSWORD_DEFAULT)
+				'password' => password_hash($pass, PASSWORD_DEFAULT),
+                'nivel'    => $nivel
 			);
             
 		} else {
 			$usuario_data = array(
 				'username' => $email,
+                'nivel' => $nivel
 			);
 		}
 
 		if ($this->Usuario_model->save_user($socio_data, $usuario_data, $socio_id)){
 			if( $socio_id == -1 ) {
+                
                 $message_data = array(
 				'item' => 'message',
 				'type' => 'success',
 				'message' => 'Socio agregado con éxito: ' . $apellido1 . ' ' . $apellido2 .' '. $nombre
 			     );
 			     $this->session->set_flashdata($message_data);
+                
+                
+                /////////////////////////
+                
+                $message_recovery = "Hola. Si has solicitado la recuperación de la contraseña, haz clic en <strong><a href='". $url_recovery ."'>este enlace</a></strong> para iniciar el proceso, en caso contrario elimina este correo.";
 
-				$config = $this->Configuracion_model->get_configuracion();
 
-				$config = Array(
-					'protocol' => 'smtp',
-					'smtp_host' => $this->encryption->decrypt($config->smtp),
-					'smtp_port' => 587,
-					'smtp_user' => $this->encryption->decrypt($config->email_emisor),
-					'smtp_pass' => $this->encryption->decrypt($config->password),
-					'mailtype' => 'html',
-					'charset' => 'utf-8',
-					'newline' => "\r\n",
+                            
+
+                           
+                
+                ////////////////////////
+                
+
+
+                $config = $this->Configuracion_model->get_configuracion();
+
+                $config = Array(
+                    'protocol' => 'smtp',
+                    'smtp_host' => $this->encryption->decrypt($config->smtp),
+                    'smtp_port' => 587,
+                    'smtp_user' => $this->encryption->decrypt($config->email_emisor),
+                    'smtp_pass' => $this->encryption->decrypt($config->password),
+                    'mailtype' => 'html',
+                    'charset' => 'utf-8',
+                    'newline' => "\r\n",
                     'smtp_timeout'   =>   7,
                     'smtp_crypto'   =>   'tls',
                     'smtp_debug'   =>   0,
@@ -231,37 +276,46 @@ class Socio extends CI_Controller {
                     'newline'   =>   "\r\n",
                     'bcc_batch_mode'   =>   false,
                     'bcc_bath_size'   =>   200
-				);
-
-				$this->load->library('email', $config );
-				$this->email->set_newline("\r\n");
-				$this->email->from($config->smtp_user, 'DIP');
-
-				$data = array(
+                );
+                
+                $data = array(
 					'name' => $socio_data['nombre']. ' ' . $socio_data['apellido1']. ' ' . $socio_data['apellido2'],
-					'URL' => 'http://url',
+					'URL' => 'https://socios.dipmurcia.es',
 					'user_name' => $socio_data['email'],
 					'password' => $pass
 				);
+                
+                $this->load->library('email');
+                $this->email->initialize($config);
+                $this->email->from($config['smtp_user'], 'Dip');
 
-				$this->email->to($socio_data['email']);
-				$this->email->subject('Alta en el sistema DIP');
-				$message = $this->load->view('emails/new_user.php', $data, true);
-				$this->email->message($message);
-				$r = $this->email->send(false);
 
-				if ( !$r ) {
-					$msg = 'Error en el envio de email: ' . $this->email->print_debugger();
+                $this->email->to($socio_data['email']);
+                $this->email->subject('Alta como socio en el sistema DIP');
+                $message = $this->load->view('emails/new_user.php', $data, true);
+                $this->email->message($message);
+
+
+                if ($this->email->send(FALSE)){
+
+                    //$this->session->set_flashdata("success", "Se ha enviado un correo a la dirección de e-mail facilitada.");
+                    //$this->load->view('login/reset_password', "refresh");
+
+                }else{
+
+                    //si ocurre algún error en el envío mostramos lista de errores.
+                    //show_error($this->email->print_debugger());
+                    $msg = 'Error en el envio de email: ' . $this->email->print_debugger();
 					$this->flash->setMessage( $msg, $this->flash->getErrorType());
                     $message_data = array(
-                    'item' => 'message',
-                    'type' => 'danger',
-                    'message' => $msg
+                        'item' => 'message',
+                        'type' => 'danger',
+                        'message' => $msg
                      );
                      $this->session->set_flashdata($message_data);
-				}
-				$this->flash->setFlashMessages();
-
+                }
+                
+                $this->flash->setFlashMessages();
 				redirect('socio/index');
 			} else {
 				$message_data = array(

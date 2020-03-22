@@ -11,6 +11,10 @@ class Intranet extends CI_Controller {
 	}
 
    public function index(){
+       
+       if ( !$this->Usuario_model->is_logged_in() )
+				redirect('login');
+       
 		$dataPage['titulo'] = 'Intranet';
 		$dataPage['main_title'] = 'Intranet';
 	   	$dataPage['description'] = 'Descripción de la página intranet.';

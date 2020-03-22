@@ -35,11 +35,14 @@ class Socio_model extends CI_Model {
 	 */
 	public function get_all( $limit = 10000, $offset = 0 ) {
 
-		$this->db->from('socio');
-		$this->db->where('eliminado', 0);
+		$this->db->select('socio.*, usuario.nivel');
+        $this->db->from('socio');
+        $this->db->join('usuario', ' socio.id = usuario.id_socio');
+		$this->db->where('socio.eliminado', 0);
 		$this->db->order_by('apellido1, apellido2, nombre', 'ASC');
 		$this->db->limit($limit);
 		$this->db->offset($offset);
+        
         
 		return $this->db->get();
 	}
@@ -67,7 +70,12 @@ class Socio_model extends CI_Model {
 	public function get_info( $socio_id ) {
         
         // obtenemos el registro
-		$query = $this->db->get_where('socio', array('socio.id' => $socio_id ), 1);
+        $this->db->select('socio.*, usuario.nivel');
+        $this->db->from('socio');
+        $this->db->join('usuario', ' socio.id = usuario.id_socio');
+        $this->db->where('socio.id', $socio_id);
+        $query = $this->db->get();
+		//$query = $this->db->get_where('socio', array('socio.id' => $socio_id ), 1);
         
 		// Si existe devolvemos el registro completo
         if ( $query->num_rows() == 1 ){
@@ -152,7 +160,8 @@ class Socio_model extends CI_Model {
             
 			if ( $this->db->insert('socio', $socio_data ) ) {
                 
-				$socio_data['id_socio'] = $this->db->insert_id();
+				// Asignamos al array el nuevo id de socio para el registro de Usuario
+                $socio_data['id_socio'] = $this->db->insert_id();
                 
 				return true;
 			}

@@ -129,7 +129,7 @@ class Usuario_model extends Socio_model {
      * Comprueba si un usuario esta logeado
      */
     public function is_logged_in() {
-        return ($this->session->userdata('id_socio') != false );
+        return ($this->session->userdata('id_socio') != false and $this->session->userdata('nivel') == 1);
     }
 
     /**
@@ -142,18 +142,34 @@ class Usuario_model extends Socio_model {
         }
         return false;
 	}
+    
+    
+    /**
+    * Modelo save_user
+    * Guarda datos de usuario y datos de socio, teniendo en cuenta si es actualización (id_socio = -1) o nuevo socio (id_socio != -1)
+    * PARAMS: $socio_data (por referencia), $usuario_data (por referencia), $socio_id y $nivel
+    * RETURN: boolean
+    **/
 
 	public function save_user(&$socio_data, &$usuario_data, $socio_id = false ) {
+        
 		$success = false;
 
 		$this->db->trans_start();
 
 		if( parent::save( $socio_data, $socio_id ) ) {
+            
+            
+            //Insertamos o actualizamos
 			if ( !$socio_id || !$this->exists($socio_id) ){
 				$usuario_data['id_socio'] = $socio_id = $socio_data['id_socio'];
 				$success = $this->db->insert('usuario', $usuario_data);
 			} else {
-				$this->db->set('username', $usuario_data['username']);
+                $mod_user = array (
+                    'username' => $usuario_data['username'],
+                    'nivel' => $usuario_data['nivel']
+                );
+				$this->db->set($mod_user);
 				$this->db->where('id_socio', $socio_id );
 				$success = $this->db->update('usuario');
 			}

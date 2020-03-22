@@ -6,6 +6,7 @@ class Area extends CI_Controller {
 	public function __construct() {
 		parent::__construct();
 		$this->load->model('Area_model');
+		$this->load->model('Usuario_model');
 		$this->load->library('mybreadcrumb', 'flash');
 		$this->load->helper('form', 'form_validation', 'url' );
 	}
@@ -14,6 +15,9 @@ class Area extends CI_Controller {
 	 * Vista principal
 	 */
 	public function index() {
+        
+        if ( !$this->Usuario_model->is_logged_in() )
+				redirect('login');
 
 		$areas_obj = $this->Area_model->get_all();
 		$data['nestedview']['main_title'] = "Listado de areas";

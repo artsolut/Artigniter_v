@@ -291,7 +291,7 @@ Utiliza el método save de la clase socio con el parámetro id_socio.
 				'value' => set_value('web', isset($socio_data->web) ? $socio_data->web : '')
 			)); ?>
 		</div>
-		<div class="col-md-6">
+		<div class="col-md-3">
 			<?php echo form_label('IBAN *', 'iban', array(
 				'class' => 'reqeuired control-label'
 			)); ?>
@@ -305,7 +305,57 @@ Utiliza el método save de la clase socio con el parámetro id_socio.
 				<?php echo form_error('iban'); ?>
 			</div>
 		</div>
+        
+		<div class="col-md-3">
+			<?php echo form_label('Nivel de Acceso *', 'nivel', array(
+				'class' => 'required control-label'
+			)); ?>
+			<?php echo '<br />';
+			 ?>    
+            <div class="row">
+			<?php 
+                $value_label = array(
+                    'Admin.',
+                    'Gestor',
+                    'Socio'
+                );
+                for ($x = 1; $x <=3; $x++){
+                    
+                    echo '<div class="col-md-4">';
+                    
+                    if ($socio_data->id == ""){
+                        if ($x == 3){
+                            $selec = TRUE;
+                        }else{
+                            $selec = FALSE;
+                        }
+                    } else {
+                        if ($socio_data->nivel == $x){
+                            $selec = TRUE;
+                        }else{
+                            $selec = FALSE;
+                        }
+                    }
+                    echo form_label($value_label[$x - 1], 'nivel');
+                    echo form_radio (array(
+                    'name' => 'nivel',
+                    'id' => 'nivel',
+                    'class' => 'form-control',
+                    'value' => $x,
+                    'checked' => $selec
+                    )); 
+                    echo '</div>';
+                }
+			?>
+            </div>
+			<div class="help-block with-errors">
+				<?php echo form_error('nivel'); ?>
+			</div>
+		</div>        
 	</div>
+    
+    
+
 
 	<div class="row">
 		<div class="col-md-3">
