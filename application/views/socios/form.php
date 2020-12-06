@@ -1,4 +1,6 @@
 <?php if ( !defined('BASEPATH') ){ die('Direct access not permited.'); }?>
+<!-- Filtro de acceso -->
+<?php $has_access = $this->usuario_model->check_access(2);//pasamos como parámetro el nivel de acceso necesario para esta sección?>
 
 <?php $this->load->view('componentes/header', $nestedview); ?>
 <?php $this->load->view('partials/breadcrumb', $nestedview); ?>
@@ -8,7 +10,7 @@
 Formulario para la edición de socios existentes.
 Utiliza el método save de la clase socio con el parámetro id_socio.
 -->
-
+<?php if ($has_access){?>
 <?php echo form_open_multipart('socio/save/'.(isset($socio_data->id)? $socio_data->id : '' ), array('id' => 'socio_form')); ?>
 
 <div class="container clearfix formulario">
@@ -57,7 +59,7 @@ Utiliza el método save de la clase socio con el parámetro id_socio.
 		</div>
 		<div class="col-md-3">
 			<?php echo form_label('Fecha de alta *', 'fecha_alta', array(
-				'class' => 'disabled control-label'
+				'class' => 'required control-label'
 			)); ?>
 			<?php echo form_input(array(
 				'name' => 'fecha_alta',
@@ -66,6 +68,9 @@ Utiliza el método save de la clase socio con el parámetro id_socio.
                 'value' => set_value('fecha_alta', isset($socio_data->fecha_alta) ? $socio_data->fecha_alta : '0000-00-00')
 
 			)); ?>
+			<div class="help-block with-errors">
+				<?php echo form_error('fecha_alta'); ?>
+			</div>
 		</div>
 	</div>
     
@@ -151,8 +156,24 @@ Utiliza el método save de la clase socio con el parámetro id_socio.
     
     
     <div class="row">
-		<div class="col-md-4">
-			<?php echo form_label('Logo Marca -800x800px-', 'logo', array(
+        <?php 
+            if (trim($socio_data->logo_marca) != ""){
+         ?>   
+            <div class="col-md-1">
+			
+           <?php
+                //echo "<br />".$socio_data->logo_marca;
+                echo "<img src=".base_url()."/public/images/logos/".$socio_data->logo_marca." alt=".$socio_data->logo_marca." height=80>";
+            ?>
+            
+           
+		</div>
+         <?php  
+            }
+         ?>
+        
+        <div class="col-md-5">
+			<?php echo form_label('Logo Marca –800x800px/1MB–', 'logo', array(
 				'class' => 'control-label'
 			)); ?>
 			<?php echo form_upload(array(
@@ -165,16 +186,16 @@ Utiliza el método save de la clase socio con el parámetro id_socio.
 				<?php echo form_error('logo'); ?>
 			</div>
 		</div>
-        <div class="col-md-2">
+        <div class="col-md-1">
 			<?php 
-            if (trim($socio_data->logo_marca) != ""){
-                //echo "<br />".$socio_data->logo_marca;
-                echo "<img src=".base_url()."/public/images/logos/".$socio_data->logo_marca." alt=".$socio_data->logo_marca." height=80>";
+            if (trim($socio_data->foto) != ""){
+                //echo "<br />".$socio_data->foto;
+                echo "<img src=".base_url()."/public/images/logos/".$socio_data->foto." alt=".$socio_data->foto." height=80>";
             }
             ?>
 		</div>
-        <div class="col-md-4">
-			<?php echo form_label('Foto socia/o -800x800px-', 'foto', array(
+        <div class="col-md-5">
+			<?php echo form_label('Foto socia/o –800x800px/1MB–', 'foto', array(
 				'class' => 'control-label'
 			)); ?>
 			<?php echo form_upload(array(
@@ -187,14 +208,7 @@ Utiliza el método save de la clase socio con el parámetro id_socio.
 				<?php echo form_error('foto'); ?>
 			</div>
 		</div>
-        <div class="col-md-2">
-			<?php 
-            if (trim($socio_data->foto) != ""){
-                //echo "<br />".$socio_data->foto;
-                echo "<img src=".base_url()."/public/images/logos/".$socio_data->foto." alt=".$socio_data->foto." height=80>";
-            }
-            ?>
-		</div>
+
 	</div>
     
     
@@ -293,7 +307,7 @@ Utiliza el método save de la clase socio con el parámetro id_socio.
 		</div>
 		<div class="col-md-3">
 			<?php echo form_label('IBAN *', 'iban', array(
-				'class' => 'reqeuired control-label'
+				'class' => 'required control-label'
 			)); ?>
 			<?php echo form_input(array(
 				'name' => 'iban',
@@ -439,4 +453,5 @@ Utiliza el método save de la clase socio con el parámetro id_socio.
 
 </div>
 <?php echo form_close(); ?>
-<?php $this->load->view('componentes/footer') ?>
+<?php } ?>
+<?php $this->load->view('componentes/footersh') ?>

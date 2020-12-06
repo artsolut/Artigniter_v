@@ -30,26 +30,36 @@ class Socio extends CI_Controller {
     public function index() {
 
 		//Si no hay sesión activa redirigimos a login
-        if ( !$this->Usuario_model->is_logged_in() )
-			redirect('login');
-
-        //Si la sesión está activa cargamos listado de socios
-        $socios_obj = $this->Socio_model->get_all();
-
-        // variable de información general
-        $data['nestedview']['main_title'] = 'Listado de Socios';
-        // objeto con listado de socios
-		$data['socios_data'] = $socios_obj;
-
-        // añadimos ruta al camino de migas
-		$this->mybreadcrumb->add( 'Socios', 'socios' );
-
-		// Generamos el camino de hormigas y lo añadimos al objeto nestedview
-		$data['nestedview']['breadcrumb'] = $this->mybreadcrumb->render();
+        if ( !$this->Usuario_model->is_logged_in() ){
+            
+            redirect('login');
         
-        // Cargamos vista para mostrar el listado de socios
-		$this->session->keep_flashdata();
-        $this->load->view('socios/listado', $data );
+        }
+			
+        if ($this->usuario_model->check_access(2)){
+            
+            //Si la sesión está activa y el nivel de acceso es el adecuado cargamos listado de socios
+            $socios_obj = $this->Socio_model->get_all();
+
+            // variable de información general
+            $data['nestedview']['main_title'] = 'Listado de Socios';
+            // objeto con listado de socios
+            $data['socios_data'] = $socios_obj;
+
+            // añadimos ruta al camino de migas
+            $this->mybreadcrumb->add( 'Socios', 'socios' );
+
+            // Generamos el camino de hormigas y lo añadimos al objeto nestedview
+            $data['nestedview']['breadcrumb'] = $this->mybreadcrumb->render();
+
+            // Cargamos vista para mostrar el listado de socios
+            //$this->session->keep_flashdata();
+            $this->load->view('socios/listado', $data );
+            
+        }elseif ($this->usuario_model->check_access(3)){
+            //Si el nivel de acceso es solo socio cargamos su ficha
+            redirect('socio/socio_view/'.$this->session->id_socio);
+        }
 	}
 
     /**
@@ -70,7 +80,12 @@ class Socio extends CI_Controller {
 		$data['main_title'] = '';
 
 		$this->mybreadcrumb->add('Socios', 'socios');
-		$this->mybreadcrumb->add('Nuevo socio', 'socios/edit');
+        
+        if ($socio_id == - 1){
+            $this->mybreadcrumb->add('Nuevo socio', 'socios/edit');
+        }else{
+            $this->mybreadcrumb->add('Editar socio', 'socios/edit');
+        }
 
 		$data['nestedview']['breadcrumb'] = $this->mybreadcrumb->render();
 
@@ -119,7 +134,9 @@ class Socio extends CI_Controller {
 		$this->form_validation->set_rules('nombre', 'Nombre', 'trim|required');
 		$this->form_validation->set_rules('apellido1', 'Primer apellido', 'trim|required');
 		$this->form_validation->set_rules('apellido2', 'Segundo apellido', 'trim|required');
-        $this->form_validation->set_rules('fecha_alta', 'Fecha de alta', 'required');
+        $this->form_validation->set_rules('fecha_alta', 'Fecha de alta', 'required|callback_check_fecha_alta');
+        $this->form_validation->set_message('check_fecha_alta', 'Formato erróneo. Deber ser año(4)-mes(2)-día(2).');
+        
 
 		if ( $socio_id == -1 ) {
 			$this->form_validation->set_rules('dni', 'DNI', 'trim|required|is_unique[socio.dni]');
@@ -134,14 +151,14 @@ class Socio extends CI_Controller {
 		else
 			$this->form_validation->set_rules('email', 'Email', 'required|valid_email');
 
-		$this->form_validation->set_rules('telefono', 'Teléfono', 'required');
+		$this->form_validation->set_rules('telefono', 'Teléfono', 'required|is_numeric|min_length[9]');
 		$this->form_validation->set_rules('provincia', 'Provincia', 'required|callback_check_provincia');
-		$this->form_validation->set_message('check_provincia', 'Seleccione una provincia.');
+		$this->form_validation->set_message('check_provincia', 'Selecciona una provincia.');
 		$this->form_validation->set_rules('localidad', 'Localidad', 'required');
 		$this->form_validation->set_rules('estatus', 'Estatus', 'required|callback_check_estatus');
-		$this->form_validation->set_message('check_estatus', 'Tiene que seleccionar un status.');
+		$this->form_validation->set_message('check_estatus', 'Tienes que seleccionar un status.');
 		$this->form_validation->set_rules('area_profesional', 'Area profesional', 'required|callback_check_area');
-		$this->form_validation->set_message('check_area', 'Seleccione un área profesional.');
+		$this->form_validation->set_message('check_area', 'Selecciona un área profesional.');
 		$this->form_validation->set_rules('iban', 'IBAN', 'required|callback_check_iban');
 		$this->form_validation->set_message('check_iban', 'El IBAN no tiene formato valido.');
         $this->form_validation->set_rules('nivel', 'Nivel de Acceso', 'required');
@@ -452,6 +469,90 @@ class Socio extends CI_Controller {
 	}
 
 
+    /**
+    * Método export_excel 
+    * Método para exportar a Excel el listado completo de socios.
+    * Parámetros: $socio_to_delete (id de socio)
+    * Return: redirige a socio/index con un mensaje de éxito o de error
+    */  
+	public function export_excel() {
+        
+        if ($this->usuario_model->check_access(2)){
+            
+            //Si la sesión está activa y el nivel de acceso es el adecuado cargamos listado de socios
+            $socios_obj = $this->Socio_model->get_all();
+
+            $data['socios_data'] = $socios_obj;
+            
+           
+            $timestamp = time();
+            $filename = 'Socios_Dip_' . $timestamp . '.xls';
+            
+            header("Content-Type: application/vnd.ms-excel; charset:utf-8" ); 
+            header("Content-Disposition: attachment; filename=\"$filename\"");
+            echo "<table>";
+                echo "<tr>";
+                    echo "<th>Nombre";
+                    echo "</th";
+                    echo "<th>Email";
+                    echo "</th";
+                    echo "<th>Teléfonos";
+                    echo "</th";
+                    echo "<th>Estatus";
+                    echo "</th";
+                    echo "<th>Localidad";
+                    echo "</th";
+                    echo "<th>Área Profesional";
+                    echo "</th";       
+                echo "</tr>";
+
+                foreach ( $data['socios_data']->result() as $socio ):
+
+                    $nombre = $socio->apellido1.' '.$socio->apellido2.', '.$socio->nombre;
+
+                    echo "<tr>";
+                        echo "<td>".$nombre;
+                        echo "</td";
+                        echo "<td>". $socio->email;
+                        echo "</td";
+                        echo "<td>". $socio->telefono;
+                        echo "</td";
+                        echo "<td>".$this->Estatus_model->get_estatus($socio->estatus);
+                        echo "</td";
+                        echo "<td>". $socio->localidad ;
+                        echo "</td";
+                        echo "<td>". $this->Area_model->get_area($socio->area_profesional);
+                        echo "</td";       
+                    echo "</tr>";
+
+                endforeach;
+
+            echo "</table>";
+            
+            // Cargamos vista para mostrar el listado de socios
+            //$this->session->keep_flashdata();
+            $this->load->view('socios/listado', $data );
+            
+        }elseif ($this->usuario_model->check_access(3)){
+            //Si el nivel de acceso es solo socio cargamos su ficha
+            redirect('socio/socio_view/'.$this->session->id_socio);
+        }
+
+	}
+    
+    
+    /**
+    * Función encargada de exportar a excel.
+    * Recibe como parametro un arreglo de datos.
+    *---------------------------------------------------------------*/
+
+    public function export_socios($data) {
+        
+        
+    }    
+    
+    
+    
 	/**
 	 * Comprobamos que el campo provincia este seleccionado
 	 */
@@ -460,7 +561,21 @@ class Socio extends CI_Controller {
 			return false;
 		return true;
 	}
-
+	public function check_fecha_alta($item){
+		
+        $anno = (int) substr($item,0,4);
+        $mes = (int) substr($item,5,2);
+        $dia = (int) substr($item,8,2);
+        
+        
+        if ( trim($item) == '' || $item == "0000-00-00")
+            return false;
+        
+        if ($dia > 31 || $dia < 1 || $mes > 12 || $mes < 1 || $anno > (int) date("Y") || $anno < 1940)
+            return false;
+        
+        return true;
+	}
 	/**
 	 * Comprobamos que el campo estatus está seleccionado
 	 */

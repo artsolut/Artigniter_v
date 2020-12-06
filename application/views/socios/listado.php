@@ -1,3 +1,6 @@
+<?php if ( !defined('BASEPATH') ){ die('Direct access not permited.'); }?>
+<!-- Filtro de acceso -->
+<?php $has_access = $this->usuario_model->check_access(2);//pasamos como parámetro el nivel de acceso necesario para esta sección?>
 <!-- Carga de cabecera -->
 <?php $this->load->view('componentes/header', $nestedview ) ?>
 <?php $this->load->view('partials/breadcrumb', $nestedview); ?>
@@ -8,6 +11,7 @@
 Tabla que muestra el listado de socios y permite su edición individual, su eliminación individual y su ordenación.
 El botón Nuevo Socio Utiliza el método create de la clase socio.
 -->
+<?php if ($has_access){?>
 <div class="container" style="margin-top: 10px;">
 	
     <!-- Área de botón nuevo -->
@@ -29,6 +33,7 @@ El botón Nuevo Socio Utiliza el método create de la clase socio.
 				 <th scope="col">Localidad</th>
 				 <th scope="col">Area prof.</th>
 				 <th>&nbsp;</th>
+                 <th>&nbsp;</th>
 			   </tr>
 			</thead>
             <!-- Cuerpo de tabla -->
@@ -49,8 +54,10 @@ El botón Nuevo Socio Utiliza el método create de la clase socio.
 						<td><?php echo $this->Area_model->get_area($socio->area_profesional) ?></td>
 						<td>
 							<a href="<?php echo base_url('socio/view/'.$socio->id) ?>"><button class="button btn-sm"><span class="oi oi-pencil"></span></button></a>
-							<button class="button btn-sm btn-danger remove"><span class="oi oi-trash"></span></button>
 						</td>
+                        <td>
+                            <button class="button btn-sm btn-danger remove"><span class="oi oi-trash"></span></button>
+                        </td>
 					</tr>
 
 				<?php endforeach; ?>
@@ -94,14 +101,14 @@ El botón Nuevo Socio Utiliza el método create de la clase socio.
             null,
             null,
             null,
+            null,
             null
           ]
         } );
-
-
-        
+ 
+        table.rows('.important').select();
 	});
 </script>
-
+<?php } ?>
 <!-- Cargamos el footer -->
-<?php $this->load->view('componentes/footer'); ?>
+<?php $this->load->view('componentes/footersh'); ?>

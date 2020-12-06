@@ -29,7 +29,8 @@ class Login extends CI_Controller {
 			//El modelo usuariuo_model ha sido cargado en autoload.php.
             //Comprobamos si el usuario está autenticado. Si lo está derivamos al controlador Socio, si no presentamos formulario de acceso
             if ($this->usuario_model->is_logged_in())
-				redirect('socios');  //Controlador Socio, método index
+				
+                redirect('socios');  //Controlador Socio, método index
         
 			//Validación del formulario
             $this->form_validation->set_rules('email', 'Email', 'required|callback_login_check');
@@ -40,11 +41,31 @@ class Login extends CI_Controller {
 				$this->load->view('componentes/header', $data );
 				$this->load->view('login');
 				$this->load->view('componentes/footer');
+                
 			} else {
-				redirect('socios');
+                
+                //redireccionamos de acuerdo al nivel de acceso
+                
+                switch ($this->session->userdata('nivel')) 
+                {
+                    case 1:
+                        redirect ('socios');
+                        break;
+                    case 2:
+                        redirect ('socios');
+                        break;
+                    case 3:
+                        redirect ('socio/socio_view');
+                        break;
+                    default:
+                        $this->usuario_model_logout();
+                        break;
+                }
 			}
 		}
-
+    
+    
+    
 		/**
 		 * Método login_check
          * Lógica de autenticación.
