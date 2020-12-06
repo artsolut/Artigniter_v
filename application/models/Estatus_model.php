@@ -69,7 +69,21 @@ class Estatus_model extends CI_Model {
 			return $query->row()->estatus;
 		}
 	}
+	/**
+	 * Método get_estatus_alias.
+     * Devuelve el alias del estatus solicitado por su id
+     * Params: $estatus_id
+     * Return: El alias del estatus
+	 */
+	public function get_estatus_alias($estatus_id) {
+		$this->db->from('estatus');
+		$this->db->where('id', $estatus_id);
+		$query = $this->db->get();
 
+		if( $query->num_rows() ){
+			return $query->row()->alias;
+		}
+	}
 	/**
 	 * Método get_all.
      * Devuelve todos los registros de estatus

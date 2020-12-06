@@ -49,9 +49,9 @@ El botón Nuevo Socio Utiliza el método create de la clase socio.
 						<td id="nombre"><?php echo $nombre ?> </td>
 						<td><?php echo $socio->email ?></td>
 						<td><?php echo $socio->telefono ?></td>
-						<td><?php echo $this->Estatus_model->get_estatus($socio->estatus) ?></td>
+						<td><?php echo $this->Estatus_model->get_estatus_alias($socio->estatus) ?></td>
 						<td><?php echo $socio->localidad ?></td>
-						<td><?php echo $this->Area_model->get_area($socio->area_profesional) ?></td>
+						<td><?php echo $this->Area_model->get_area_alias($socio->area_profesional) ?></td>
 						<td>
 							<a href="<?php echo base_url('socio/view/'.$socio->id) ?>"><button class="button btn-sm"><span class="oi oi-pencil"></span></button></a>
 						</td>
@@ -95,7 +95,7 @@ El botón Nuevo Socio Utiliza el método create de la clase socio.
         
         $("#tabla-socios").dataTable({
           "columns": [
-            { "width": "40%" },
+            { "width": "30%" },
             null,
             null,
             null,

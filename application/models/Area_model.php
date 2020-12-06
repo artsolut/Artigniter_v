@@ -54,7 +54,18 @@ class Area_model extends CI_Model {
 			return $query->row()->area;
 		}
 	}
+	/**
+	 * Obtiene el alias de un area dada por el id
+	 */
+	public function get_area_alias($area_id) {
+		$this->db->from('area_profesional');
+		$this->db->where('id', $area_id);
+		$query = $this->db->get();
 
+		if( $query->num_rows() ){
+			return $query->row()->alias;
+		}
+	}
 	public function get_all( $limit = 10000, $offset = 0 ) {
 		$this->db->from('area_profesional');
 		$this->db->order_by('area', 'asc');
