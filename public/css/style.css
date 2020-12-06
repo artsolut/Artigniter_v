@@ -34,6 +34,8 @@ body {
   font-family: 'Libre Franklin', sans-serif;
   font-weight:200;
   font-size: 18px;
+
+
 }
 
 a, a:hover, a:active, a:visited {
@@ -66,7 +68,8 @@ header{ padding:20px 0}
 
 /* FOOTER */
 
-footer{/*  position:absolute; */ bottom:0; left:0; right:0; border-top:15px solid #666666; background-color:#de453b; text-align:center; padding:30px 0; margin-top: 20px;}
+.footerlong{  position:absolute;  height: 137px;  bottom:0; left:0; right:0; border-top:15px solid #666666; background-color:#de453b; text-align:center; padding:30px 0; margin-top: 20px;}
+.footershort{  position:relative;  height: 137px;  bottom:0; left:0; right:0; border-top:15px solid #666666; background-color:#de453b; text-align:center; padding:30px 0; margin-top: 20px;}
 
 
 /* FORMULARIO LOGIN */
@@ -84,3 +87,4 @@ footer{/*  position:absolute; */ bottom:0; left:0; right:0; border-top:15px soli
 .wrap_login a{ text-decoration:underline;font-style:italic;  }
 
 .wrap_login h1{ margin-bottom:35px;}
+
