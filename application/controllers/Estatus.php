@@ -59,7 +59,9 @@ class Estatus extends CI_Controller {
 			$this->form_validation->set_rules('estatus', 'Estatus', 'trim|required');
 
 		$this->form_validation->set_rules('cuota', 'Cuota', 'trim|required|numeric');
-
+        
+		$this->form_validation->set_rules('alias', 'Alias', 'required|min_length[2]|max_length[3]');
+		$this->form_validation->set_message('alias', 'Dos o tres caracteres en mayúsculas');
 		$this->form_validation->set_rules('periodicidad', 'Periodicidad', 'callback_chech_periodicidad');
 		$this->form_validation->set_message('check_periodicidad', 'Tiene que seleccionar una periodicidad');
 
@@ -71,6 +73,7 @@ class Estatus extends CI_Controller {
 		$estatus_data = array(
 			'estatus' => $this->input->post('estatus'),
 			'cuota' => $this->input->post('cuota'),
+            'alias' => strtoupper($this->input->post('alias')),
 			'periodicidad' => $this->input->post('periodicidad'),
 			'activo' => $this->input->post('activo')
 		);
@@ -81,34 +84,51 @@ class Estatus extends CI_Controller {
 
 		if ( $this->Estatus_model->save($estatus_data, $estatus_id)) {
 			if ( $estatus_id == -1 ) {
-				$msg = "Estatus insertado con éxito";
-				$this->flash->setMessage($msg, $this->flash->getSuccessType());
+				 $message_data = array(
+                    'item' => 'message',
+                    'type' => 'success',
+                    'message' => 'Estatus insertado con éxito'
+                 );
 			} else {
-				$msg = "Estatus modificado con éxito";
-				$this->flash->setMessage($msg, $this->flash->getSuccessType());
+                $message_data = array(
+                    'item' => 'message',
+                    'type' => 'success',
+                    'message' => 'Estatus modificado con éxito'
+                 );
 			}
-			$this->flash->setFlashMessages();
+            $this->session->set_flashdata($message_data);
 			redirect('estatus');
 		} else {
-			$msg = "Ocurrió un error al insertar el estatus";
-			$this->flash->setMessage($msg, $this->flash->getErrorType());
-			$this->flash->setFlashMessages();
+			$message_data = array(
+				'item' => 'message',
+				'type' => 'danger',
+				'message' => 'Ocurrió un error al insertar el estatus'
+			     );
+			     $this->session->set_flashdata($message_data);
+
 			redirect('estatus');
 		}
 	}
 
 	public function delete($estatus_id) {
 		if ( $this->Estatus_model->delete($estatus_id)) {
-			$msg = "Estatus eliminado con exito";
-			$this->flash->setMessage($msg, $this->flash->getSuccessType());
-			$this->flash->setFlashMessages();
-			redirect('estatus');
+			$message_data = array(
+				'item' => 'message',
+				'type' => 'success',
+				'message' => 'Estatus eliminado con exito'
+			     );
+			     
 		} else {
-			$msg = "Ocurrió un error al eliminar el status";
-			$this->flash->setMessage($msg, $this->flash->getErrorType());
-			$this->flash->setFlashMessages();
-			redirect('estatus');
+			 $message_data = array(
+				'item' => 'message',
+				'type' => 'danger',
+				'message' => 'Ocurrió un error al eliminar el status'
+			     );
+			     
 		}
+        
+        $this->session->set_flashdata($message_data);
+        redirect('estatus');
 	}
 
 	public function chech_periodicidad($item) {

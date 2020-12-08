@@ -121,7 +121,7 @@ class Estatus_model extends CI_Model {
 		$this->db->trans_start();
 		$this->db->delete('estatus', array('id' => $estatus_id));
 		$this->db->trans_complete();
-		$success &= $this->db->trans_status();
+		$success = $this->db->trans_status();
 		return $success;
 	}
 

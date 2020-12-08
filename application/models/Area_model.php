@@ -98,7 +98,9 @@ class Area_model extends CI_Model {
 		$this->db->trans_start();
 		$this->db->delete('area_profesional', array('id' => $area_id));
 		$this->db->trans_complete();
-		$success &= $this->db->trans_status();
+        //$queError = $this->db->error['message'];
+        //redirect('https://www.artsolut.es?error='.$queError);
+		$success = $this->db->trans_status();
 		return $success;
 	}
 

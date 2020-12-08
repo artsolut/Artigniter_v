@@ -64,7 +64,8 @@ class Area extends CI_Controller {
 		}
 
 		$area_data = array(
-			'area' => $this->input->post('area')
+			'area' => $this->input->post('area'),
+            'alias' => strtoupper($this->input->post('alias'))
 		);
 
 		if ( $area_id != -1 ) {
@@ -72,38 +73,71 @@ class Area extends CI_Controller {
 		}
 
 		if ( $this->Area_model->save( $area_data, $area_id )) {
-			if ( $area_id == -1 ) {
-				$msg = "Área profesional insertada con éxito";
-				$this->flash->setMessage($msg, $this->flash->getSuccessType());
+			
+            if ( $area_id == -1 ) {
+				
+                $message_data = array(
+				'item' => 'message',
+				'type' => 'success',
+				'message' => 'Área profesional insertada con éxito'
+			     );
+
 			} else {
-				$msg = "Área profesional modificada con éxito";
-				$this->flash->setMessage($msg, $this->flash->getSuccessType());
-			}
-			$this->flash->setFlashMessages();
+				$message_data = array(
+				'item' => 'message',
+				'type' => 'success',
+				'message' => 'Área profesional modificada con éxito'
+			     );
+
+            }
+			
+            $this->session->set_flashdata($message_data);
 			redirect('area');
+            
 		} else {
-			$msg = "Ocurrió un error al insertar el area profesional";
-			$this->flash->setMessage($msg, $this->flash->getErrorType());
-			$this->flash->setFlashMessages();
+            
+            $message_data = array(
+				'item' => 'message',
+				'type' => 'danger',
+				'message' => 'Ocurrió un error al insertar el área profesional'
+			     );
+			 
+            $this->session->set_flashdata($message_data);
 			redirect('area');
 		}
 	}
 
 	/**
-	 * Elimina un area profesional seleccionado
+	 * Elimina un area profesional seleccionada
 	 */
 	public function delete($area_id) {
-		if ( $this->Area_model->delete($area_id)) {
-			$msg = 'Área profesional eliminada con éxito';
-			$this->flash->setMessage($msg, $this->flash->getSuccessType());
-			$this->flash->setFlashMessages();
-			redirect('area');
+		
+        if ($this->Area_model->delete($area_id)) {
+			
+            $message_data = array(
+				'item' => 'message',
+				'type' => 'success',
+				'message' => 'Área profesional eliminada con éxito'
+			     );
+			     
 		} else {
-			$msg = 'Ocurrió un error al eliminar el area';
-			$this->flash->setMessage($msg, $this->flash->getErrorType());
-			$this->flash->setFlashMessages();
-			redirect('area');
+
+            $message_data = array(
+				'item' => 'message',
+				'type' => 'danger',
+				'message' => 'Ocurrió un error al eliminar el área'
+			     );
 		}
-	}
+        
+        $this->session->set_flashdata($message_data);
+        redirect('area');
+    }
 
 }
+
+
+
+
+
+
+
